@@ -13,6 +13,8 @@ res["3840x2160"] = [3840/2, 0] # 4k
 focused = False # variable to track if the gui is focused so it knows to track typing or not
 opacity = 0.98
 
+# variable for the minimum resolution (minSize x minSize)
+minSize = 500
 # variable to track the margins used on the main layout
 MARGIN = 5
 # variable to allow going back to previous size after maximizing
@@ -31,22 +33,24 @@ rightDown = False
 # variablee to track if the snap widget is up
 isSnapWidget = False
 
-# variables for color settings
-backgroundColor = "#2E3440"
-accentColor1 = "#8FBCBB"
-accentColor2 = "#A3BE8C"
+# some sample colors
+salmon = "#D08770"
+lightBlue = "#81A1C1"
+beige = "#EBCB8B"
+skyBlue = "#88C0D0"
+lightGrey = "#E5E9F0"
+mediumGrey = "#4C566A"
+blueGrey = "#D8DEE9"
+pastelRed = "#BF616A"
+darkGrey = "#3B4252"
+seaFoamGreen = "#8FBCBB"
+oliveGreen = "#A3BE8C"
+darkestGrey = "#3B4252"
+darkRed = "#990000"
 
-bracketColor = "#D08770"
-keywordColor = "#81A1C1"
-parenColor = "#EBCB8B"
-braceColor = "#D08770"
-functionColor = "#88C0D0"
-commentColor = "#4C566A"
-textColor = "#D8DEE9"
-stringColor = "#8FBCBB"
-numberColor = "#BF616A"
-selectionColor = "#4C566A"
-curLineColor = "#3B4252"
-selectionTextColor = "#D8DEE9"
-operatorColor = "#EBCB8B"
-unclosedString = "#BF616A"
+# variables for color settings
+backgroundColor = lightGrey
+accentColor1 = darkestGrey
+accentColor2 = lightGrey
+
+closeButtonHover = darkRed

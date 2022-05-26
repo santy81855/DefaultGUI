@@ -14,15 +14,11 @@ from PyQt5.QtWidgets import QWidget, QFrame
 from PyQt5.QtCore import Qt, QRect, QSize, QRectF
 from PyQt5.QtWidgets import QWidget, QPlainTextEdit, QTextEdit
 from PyQt5.QtGui import QColor, QPainter, QTextFormat, QLinearGradient
-import textwrap
-from pynput import keyboard
-import string
 import os
 import subprocess
 from pathlib import Path
 import ctypes
 import re
-from PyQt5.Qsci import QsciScintilla
 # to get the working monitor size
 from win32api import GetMonitorInfo, MonitorFromPoint
 import config
@@ -40,11 +36,11 @@ class ButtonFormat(QPushButton):
             border-style: solid;
             border-width: 2px;
             border-radius: 10px;
-            border-color: #8FBCBB;
+            border-color:"""+config.accentColor1+""";
         }
         QPushButton::hover
         {
-            background-color:#8FBCBB;
+            background-color:"""+config.accentColor1+""";
         }
         """)
         self.setMouseTracking(True)
@@ -65,7 +61,7 @@ class SnapBox(QFrame):
         border-style:solid;
         border-width:3px;
         border-radius: 20px;
-        border-color: #8FBCBB;
+        border-color:"""+config.accentColor1+""";
         background-color:"""+config.backgroundColor+""";
         """)
         # create the main horizoontal layout
@@ -85,13 +81,13 @@ class SnapBox(QFrame):
         {
             font-size: 18px;
             background-color: """+config.backgroundColor+""";
-            color: #8FBCBB;
+            color:"""+config.accentColor1+""";
             border:none;
             border-radius:10px;
         }
         QPushButton::hover
         {
-            background-color:#8FBCBB;
+            background-color:"""+config.accentColor1+""";
             color:"""+config.backgroundColor+""";
         }
         """)
@@ -104,13 +100,13 @@ class SnapBox(QFrame):
         {
             font-size: 18px;
             background-color: """+config.backgroundColor+""";
-            color: #8FBCBB;
+            color:"""+config.accentColor1+""";
             border:none;
             border-radius:10px;
         }
         QPushButton::hover
         {
-            background-color:#8FBCBB;
+            background-color:"""+config.accentColor1+""";
             color:"""+config.backgroundColor+""";
         }
         """)
@@ -199,7 +195,7 @@ class SnapBox(QFrame):
         config.snapWidget = False
     
     def bl(self):
-        config.downDown = False
+        config.upDown = False
         config.downDown = True
         config.leftDown = False
         config.rightDown = False

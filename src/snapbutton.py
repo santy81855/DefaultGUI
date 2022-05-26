@@ -31,7 +31,6 @@ class SnapButton(QPushButton):
         super(SnapButton, self).__init__()
         self.parent = parent
         self.setText("snap")
-        #self.setFixedSize(20, 20)
         self.adjustSize()
         #self.setMaximumSize(100, 20)
         self.setStyleSheet("""
@@ -48,6 +47,12 @@ class SnapButton(QPushButton):
             }
                                 """)
         self.setMouseTracking(True)
+    
+    def mousePressEvent(self, event):
+        config.mainWin.snapWidget.hide()
+    
+    def mouseReleaseEvent(self, event):
+        config.mainWin.snapWidget.show()
 
     # when we hover over this widget should show but disappear when we unhover
     def mouseMoveEvent(self, event):

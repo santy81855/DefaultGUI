@@ -54,12 +54,13 @@ class MyBar(QWidget):
             {
             background-color: """+config.backgroundColor+"""; 
             border:none;
-            color: #E5E9F0;
+            color:"""+config.accentColor1+""";
             font: 14pt "Consolas";
             }
             QPushButton::hover
             {
-                background-color : #990000;
+                background-color :"""+config.closeButtonHover+""";
+                color: """+config.backgroundColor+""";
             }
                                 """)
         self.btn_close.setMouseTracking(True)
@@ -72,12 +73,12 @@ class MyBar(QWidget):
             {
             background-color: """+config.backgroundColor+"""; 
             border:none;
-            color: #E5E9F0;
+            color:"""+config.accentColor1+""";
             font: 14pt "Consolas";
             }
             QPushButton::hover
             {
-                background-color : #D8DEE9;
+                background-color : """+config.accentColor1+""";
                 color: """+config.backgroundColor+""";
             }
                                 """)
@@ -90,12 +91,12 @@ class MyBar(QWidget):
             {
             background-color: """+config.backgroundColor+"""; 
             border:none;
-            color: #E5E9F0;
+            color:"""+config.accentColor1+""";
             font: 14pt "Consolas";
             }
             QPushButton::hover
             {
-                background-color : #D8DEE9;
+                background-color : """+config.accentColor1+""";
                 color: """+config.backgroundColor+""";
             }
                                 """)
@@ -111,7 +112,7 @@ class MyBar(QWidget):
         self.title.setStyleSheet("""
             background-color: """+config.backgroundColor+""";
             border:none;
-            color: #8FBCBB;
+            color : """+config.accentColor1+""";
             font: 14pt "Consolas";
             """)
         self.setLayout(self.layout)

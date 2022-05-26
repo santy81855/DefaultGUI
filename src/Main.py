@@ -1,7 +1,6 @@
 import sys
 # to get the working monitor size
 from win32api import GetMonitorInfo, MonitorFromPoint
-from PyQt5.Qsci import QsciScintilla, QsciLexerPython
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5.QtGui import QCursor, QMouseEvent, QFont, QKeySequence, QSyntaxHighlighter, QTextCharFormat, QBrush, QTextCursor
@@ -17,8 +16,6 @@ from PyQt5.QtWidgets import QWidget, QFrame
 from PyQt5.QtCore import Qt, QRect, QSize, QRectF
 from PyQt5.QtWidgets import QWidget, QPlainTextEdit, QTextEdit
 from PyQt5.QtGui import QColor, QPainter, QTextFormat, QLinearGradient
-from PyQt5 import Qsci
-from PyQt5.Qsci import QsciScintilla, QsciLexerPython, QsciLexerCPP, QsciLexerCSharp, QsciLexerJava, QsciLexerJavaScript, QsciLexerJSON
 import textwrap
 from pynput import keyboard
 import string
@@ -27,21 +24,22 @@ import subprocess
 from pathlib import Path
 import ctypes
 import re
-import config, TitleBar, snap, snapbutton
+import config, TitleBar, Snap, SnapButton
 
 class MainWindow(QFrame):
     def __init__(self):
         super(MainWindow, self).__init__()
-        # store the main window widget
+        # store the main window widget so we can access all these variables from other files
         global mainWin
         config.mainWin = self
-        # set the opacity to full to start with
+        # set the window to be opaque to begin with
         self.setWindowOpacity(1.0)
-        # get the current working resolution to account for things like the taskbar
+        # get the current working resolution to account for things like the taskbar being displayed
         monitor_info = GetMonitorInfo(MonitorFromPoint((0,0)))
         working_resolution = monitor_info.get("Work")
         workingWidth = working_resolution[2]
         workingHeight = working_resolution[3]
+        # start the window on the middle of the screen
         self.setGeometry(workingWidth/7, 0, workingWidth - (2 * workingWidth / 7), workingHeight)
         # vertical layout
         self.layout = QVBoxLayout()
@@ -49,8 +47,7 @@ class MainWindow(QFrame):
         # add the title bar
         self.titlebarWidget = TitleBar.MyBar(self)
         self.layout.addWidget(self.titlebarWidget)
-        
-        # add drop shadow
+        # add drop shadow under the title bar
         self.shadow = QGraphicsDropShadowEffect()
         self.shadow.setBlurRadius(8)
         self.shadow.setXOffset(0)
@@ -59,41 +56,61 @@ class MainWindow(QFrame):
         # add a drop shadow before the next thing
         self.dropShadow = QLabel("")
         self.dropShadow.setStyleSheet("""
-        background-color: """+config.backgroundColor+""";
-        border: none;
-        
+            background-color: """+config.backgroundColor+""";
+            border: none;
                                         """)
         self.dropShadow.setFixedHeight(1)
         self.dropShadow.setGraphicsEffect(self.shadow)
         self.layout.addWidget(self.dropShadow)
 
-        # add a stretch where other widgets could go
-        self.layout.addStretch(-1)
-        
+        #-----------------------------------------ADD YOUR WIDGETS HERE-------------------------------------------------------#
+
+
+
+
+
+        #---------------------------------------------------------------------------------------------------------------------#
+
         # add the infobar at the bottom
         self.infobarlayout = QHBoxLayout()
+        # add a stretch to the vertical layout to put the infobar at the very bottom
+        self.layout.addStretch(-1)
         # add a stretch to the infobar to center the snap button
         self.infobarlayout.addStretch(-1)
         # left, top, right, bottom
         #self.infobarlayout.setContentsMargins(0, 12, 10, 0)
         self.infobarlayout.setSpacing(0)
-        
-        # create a button to go in the middle for snapping
-        self.snapButton = snapbutton.SnapButton(self)
+        # create a button to go in the middle for snapping the window
+        self.snapButton = SnapButton.SnapButton(self)
         # create a widget for the snapping options
-        self.snapWidget = snap.SnapBox(self)
+        self.snapWidget = Snap.SnapBox(self)
         # add the snapbutton to theh infobar
         self.infobarlayout.addWidget(self.snapButton)
         # add a stretch
         self.infobarlayout.addStretch(1)
+        # add another drop shadown
+        self.shadow2 = QGraphicsDropShadowEffect()
+        self.shadow2.setBlurRadius(8)
+        self.shadow2.setXOffset(0)
+        self.shadow2.setYOffset(-3)
+        self.shadow2.setColor(QColor("black"))
+        # add a drop shadow2 before the next thing
+        self.dropshadow2 = QLabel("")
+        self.dropshadow2.setStyleSheet("""
+            background-color: """+config.backgroundColor+""";
+            border: none;
+        
+                                        """)
+        self.dropshadow2.setFixedHeight(1)
+        self.dropshadow2.setGraphicsEffect(self.shadow2)
+        self.layout.addWidget(self.dropshadow2)
         # add the infobar to the main layout
         self.layout.addLayout(self.infobarlayout)
-        #------------------------------------------------------------------------#
         # set the layout
         self.setLayout(self.layout)
         
         # the min height and width will be 500 x 500
-        self.setMinimumSize(500, 500)
+        self.setMinimumSize(config.minSize, config.minSize)
         self.setWindowFlags(Qt.FramelessWindowHint)
         self.pressing = False
         self.movingPosition = False
@@ -118,9 +135,9 @@ class MainWindow(QFrame):
         self.tr = False
         self.top = False
         self.setMouseTracking(True)
+        # function to make it opaque if unfocused and blur if focused
         app.focusChanged.connect(self.on_focusChanged)
-
-        # shortcut to snap the window to left, right, up, down, and corners
+        # shortcuts to snap the window to left, right, up, down, and corners
         self.shortcut_snapLeft = QShortcut(QKeySequence('Ctrl+Alt+Left'), self)
         self.shortcut_snapLeft.activated.connect(lambda: self.snapWin("left"))
         self.shortcut_snapRight = QShortcut(QKeySequence('Ctrl+Alt+Right'), self)
@@ -310,7 +327,6 @@ class MainWindow(QFrame):
         # snap down
         elif direction == "bottom" and config.leftDown == False and config.rightDown == False:
             self.setGeometry(monitor.left(), monitor.top() + workingHeight / 2, workingWidth, workingHeight / 2)
-            print(self.height())
             # set Down to True and all others to false
             config.downDown = True
             config.upDown = False
@@ -334,7 +350,7 @@ class MainWindow(QFrame):
         self.pressing = True
         if config.isMaximized == False:
             # if they clicked on the edge then we need to change pressing to true and resizingWindow to
-            # true and we need to change the cursor shape
+            # true and we need to change the cursor shape.
             # top left
             if pos.x() <= 8 and pos.y() <= 8:
                 self.resizingWindow = True
@@ -405,70 +421,70 @@ class MainWindow(QFrame):
                 QApplication.setOverrideCursor(Qt.ArrowCursor)
         # if they are resizing
         # need to subtract the movement from the width/height 
-        # but I also need to account for if they are resizing horizontally from the left or
-        # vertically from the top because I need to shift the window to the right/down the same amount
+        # but also need to account for if they are resizing horizontally from the left or
+        # vertically from the top because we need to shift the window to the right/down the same amount
         if self.pressing and self.resizingWindow:
             # resize from the top
             if self.top == True:
                 # resize from the top
-                if self.height() - event.pos().y() >= 600:
+                if self.height() - event.pos().y() >= config.minSize:
                     self.setGeometry(self.pos().x(), self.pos().y() + event.pos().y(), self.width(), self.height() - event.pos().y())
             # resize from the top left
             if self.tl == True:
                 # move both dimensions if both boundaries are okay
-                if self.width() - event.pos().x() >= 600 and self.height() - event.pos().y() >= 600:
+                if self.width() - event.pos().x() >= config.minSize and self.height() - event.pos().y() >= config.minSize:
                     self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y() + event.pos().y(), self.width() - event.pos().x(), self.height() - event.pos().y())
                 # move only top if width is already at its smallest
-                elif self.height() - event.pos().y() >= 600:
+                elif self.height() - event.pos().y() >= config.minSize:
                     self.setGeometry(self.pos().x(), self.pos().y() + event.pos().y(), self.width(), self.height() - event.pos().y())
                 # move only left if height is at its smallest
-                elif self.width() - event.pos().x() > 600:
+                elif self.width() - event.pos().x() > config.minSize:
                     self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y(), self.width() - event.pos().x(), self.height())
             
             # resize top right
             if self.tr == True:
                 pos = event.pos().x() 
                 # top right
-                if self.height() - event.pos().y() >= 600 and self.width() >= 600:
+                if self.height() - event.pos().y() >= config.minSize and self.width() >= config.minSize:
                     self.setGeometry(self.pos().x(), self.pos().y() + event.pos().y(), pos, self.height() - event.pos().y())
 
                 # resize from the top
-                elif self.height() - event.pos().y() >= 600:
+                elif self.height() - event.pos().y() >= config.minSize:
                     self.setGeometry(self.pos().x(), self.pos().y() + event.pos().y(), self.width(), self.height() - event.pos().y())
-                elif self.width() >= 600:
+                elif self.width() >= config.minSize:
                     self.setGeometry(self.pos().x(), self.pos().y(), pos, self.height()) 
 
             # resize from the left to the right
             if self.left == True:
                 # resize from the left
-                if self.width() - event.pos().x() > 600:
+                if self.width() - event.pos().x() > config.minSize:
                     self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y(), self.width() - event.pos().x(), self.height())
             # resize from the right
             if self.right == True:
                 pos = event.pos().x()
-                if self.width() >= 600:
+                if self.width() >= config.minSize:
                     self.setGeometry(self.pos().x(), self.pos().y(), pos, self.height()) 
             # resize from the bottom
             if self.bottom == True:
                 pos = event.pos().y()
-                if self.height() >= 600:
+                if self.height() >= config.minSize:
                     self.setGeometry(self.pos().x(), self.pos().y(), self.width(), pos) 
             # resize from the bottom right
             if self.br == True:
                 pos = event.pos()
-                if self.height() >= 600 and self.width() >= 600:
+                if self.height() >= config.minSize and self.width() >= config.minSize:
                     self.setGeometry(self.pos().x(), self.pos().y(), pos.x(), pos.y()) 
             # resize from the bottom left
             if self.bl == True:
                 pos = event.pos().y()
-                if self.width() - event.pos().x() > 600 and self.height() >= 600:
+                if self.width() - event.pos().x() > config.minSize and self.height() >= config.minSize:
                     self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y(), self.width() - event.pos().x(), pos)
-                elif self.height() >= 600:
+                elif self.height() >= config.minSize:
                     self.setGeometry(self.pos().x(), self.pos().y(), self.width(), pos) 
-                elif self.width() - event.pos().x() > 600:
+                elif self.width() - event.pos().x() > config.minSize:
                     self.setGeometry(self.pos().x() + event.pos().x(), self.pos().y(), self.width() - event.pos().x(), self.height())
             
-    # if the mouse button is released then tag pressing as false
+    # if the mouse button is released then set 'pressing' as false
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.RightButton:
             return
@@ -494,8 +510,9 @@ user32.SetProcessDPIAware()
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     config.application = app
-    app.setWindowIcon(QtGui.QIcon(config.logoName)) # sets the logo
-    #app.setStyleSheet(stylesheet2)    
+    # set the logo
+    app.setWindowIcon(QtGui.QIcon(config.logoName))   
+    # find the resolution of the monitor the user is on
     screen_resolution = app.desktop().screenGeometry()
     width, height = screen_resolution.width(), screen_resolution.height()
     key = str(width) + "x" + str(height)
@@ -504,6 +521,7 @@ if __name__ == "__main__":
         startingLocation = [500, 500]
     else:
         startingLocation = config.res[key]
+    # create the main window widget and display it
     mw = MainWindow()
     mw.show()
 
