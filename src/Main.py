@@ -62,6 +62,8 @@ class MainWindow(QFrame):
         self.dropShadow.setFixedHeight(1)
         self.dropShadow.setGraphicsEffect(self.shadow)
         self.layout.addWidget(self.dropShadow)
+        # add a stretch to the vertical layout to keep the title bar at the top
+        self.layout.addStretch(-1)
 
         #-----------------------------------------ADD YOUR WIDGETS HERE-------------------------------------------------------#
 
@@ -73,8 +75,6 @@ class MainWindow(QFrame):
 
         # add the infobar at the bottom
         self.infobarlayout = QHBoxLayout()
-        # add a stretch to the vertical layout to put the infobar at the very bottom
-        self.layout.addStretch(-1)
         # add a stretch to the infobar to center the snap button
         self.infobarlayout.addStretch(-1)
         # left, top, right, bottom
@@ -103,10 +103,13 @@ class MainWindow(QFrame):
                                         """)
         self.dropshadow2.setFixedHeight(1)
         self.dropshadow2.setGraphicsEffect(self.shadow2)
-        self.layout.addWidget(self.dropshadow2)
-        # add the infobar to the main layout
-        self.layout.addLayout(self.infobarlayout)
-        # set the layout
+        # only add the info bar to the main window if it is toggled in the config file
+        if config.infoBar == True:
+            self.layout.addWidget(self.dropshadow2)
+            # add the infobar to the main layout
+            self.layout.addLayout(self.infobarlayout)
+        
+        # set the layout for the main window
         self.setLayout(self.layout)
         
         # the min height and width will be 500 x 500
