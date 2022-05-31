@@ -1,26 +1,8 @@
-import sys
 from PyQt5 import QtCore
 from PyQt5 import QtGui
-from PyQt5.QtGui import QCursor, QMouseEvent, QFont, QKeySequence, QSyntaxHighlighter, QTextCharFormat, QBrush, QTextCursor
-from PyQt5.QtCore import QPoint, pyqtSignal, QRegExp
-from PyQt5.QtCore import Qt, QPropertyAnimation, QRect, QEasingCurve
-from PyQt5.QtCore import QObject, QMimeData
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit, QCompleter, QFileDialog, QGraphicsDropShadowEffect
-from PyQt5.QtWidgets import QHBoxLayout, QTextEdit, QPlainTextEdit, QShortcut
-from PyQt5.QtWidgets import QLabel, QStackedWidget, QMessageBox
-from PyQt5.QtWidgets import QPushButton, QDesktopWidget
-from PyQt5.QtWidgets import QVBoxLayout, QScrollBar
-from PyQt5.QtWidgets import QWidget, QFrame
-from PyQt5.QtCore import Qt, QRect, QSize, QRectF
-from PyQt5.QtWidgets import QWidget, QPlainTextEdit, QTextEdit
-from PyQt5.QtGui import QColor, QPainter, QTextFormat, QLinearGradient
-import os
-import subprocess
-from pathlib import Path
-import ctypes
-import re
-# to get the working monitor size
-from win32api import GetMonitorInfo, MonitorFromPoint
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QApplication, QLabel, QDesktopWidget, QWidget, QPushButton, QFrame
+from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtGui import QCursor
 import config
 
 class ButtonFormat(QPushButton):

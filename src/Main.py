@@ -1,30 +1,33 @@
 import sys
-# to get the working monitor size
-from win32api import GetMonitorInfo, MonitorFromPoint
-from PyQt5 import QtCore
 from PyQt5 import QtGui
-from PyQt5.QtGui import QCursor, QMouseEvent, QFont, QKeySequence, QSyntaxHighlighter, QTextCharFormat, QBrush, QTextCursor
-from PyQt5.QtCore import QPoint, pyqtSignal, QRegExp
-from PyQt5.QtCore import Qt, QPropertyAnimation, QRect, QEasingCurve
-from PyQt5.QtCore import QObject, QMimeData
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit, QCompleter, QFileDialog, QGraphicsDropShadowEffect
-from PyQt5.QtWidgets import QHBoxLayout, QTextEdit, QPlainTextEdit, QShortcut, QScrollArea
-from PyQt5.QtWidgets import QLabel, QStackedWidget, QMessageBox
-from PyQt5.QtWidgets import QPushButton, QDesktopWidget
-from PyQt5.QtWidgets import QVBoxLayout, QScrollBar
-from PyQt5.QtWidgets import QWidget, QFrame
-from PyQt5.QtCore import Qt, QRect, QSize, QRectF
-from PyQt5.QtWidgets import QWidget, QPlainTextEdit, QTextEdit
-from PyQt5.QtGui import QColor, QPainter, QTextFormat, QLinearGradient
-import textwrap
-from pynput import keyboard
-import string
-import os
-import subprocess
-from pathlib import Path
-import ctypes
-import re
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QShortcut, QApplication, QGraphicsDropShadowEffect, QLabel, QDesktopWidget, QFrame
+from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtGui import QColor, QCursor, QKeySequence
 import config, TitleBar, Snap, SnapButton
+from platform import system
+operatingSystem = system()
+
+# Windows
+if operatingSystem == 'Windows':
+    # to get the working monitor size
+    from win32api import GetMonitorInfo, MonitorFromPoint
+    # to get the scaling aware
+    import ctypes
+    # this sets the appID
+    myappid = config.appName
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    # to be scaling aware
+    user32 = ctypes.windll.user32 
+    user32.SetProcessDPIAware()
+
+# macOS
+elif operatingSystem == 'Darwin':
+    print('mac')
+
+
+# linux
+elif operatingSystem == 'Linux':
+    print('linux')
 
 class MainWindow(QFrame):
     def __init__(self):
@@ -34,11 +37,18 @@ class MainWindow(QFrame):
         config.mainWin = self
         # set the window to be opaque to begin with
         self.setWindowOpacity(1.0)
-        # get the current working resolution to account for things like the taskbar being displayed
-        monitor_info = GetMonitorInfo(MonitorFromPoint((0,0)))
-        working_resolution = monitor_info.get("Work")
-        workingWidth = working_resolution[2]
-        workingHeight = working_resolution[3]
+        # we need to account for windows since it can have a taskbar taking up screen space
+        if operatingSystem == 'Windows':
+            # get the current working resolution to account for things like the taskbar being displayed on windows
+            monitor_info = GetMonitorInfo(MonitorFromPoint((0,0)))
+            working_resolution = monitor_info.get("Work")
+            workingWidth = working_resolution[2]
+            workingHeight = working_resolution[3]
+        else:
+            # if now windows then assume there is no taskbar
+            resolution = app.desktop().screenGeometry()
+            workingWidth = resolution.width()
+            workingHeight = resolution.height()
         # start the window on the middle of the screen
         self.setGeometry(workingWidth/7, 0, workingWidth - (2 * workingWidth / 7), workingHeight)
         # vertical layout
@@ -502,13 +512,6 @@ class MainWindow(QFrame):
         self.tr = False
         self.tl = False
         self.top = False
-
-# this sets the icon as your taskbar icon
-myappid = config.appName
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-# to be scaling aware
-user32 = ctypes.windll.user32 
-user32.SetProcessDPIAware()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
