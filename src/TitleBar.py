@@ -185,11 +185,17 @@ class MyBar(QWidget):
             self.movingPosition = False
             # get the global positionn
             globalpos = QCursor()
-            # get the current working resolution to account for things like the taskbar
-            monitor_info = GetMonitorInfo(MonitorFromPoint((0,0)))
-            working_resolution = monitor_info.get("Work")
-            workingWidth = working_resolution[2]
-            workingHeight = working_resolution[3]
+            # get the current working resolution to account for things like the taskbar being displayed on windows
+            if operatingSystem == 'Windows':
+                monitor_info = GetMonitorInfo(MonitorFromPoint((0,0)))
+                working_resolution = monitor_info.get("Work")
+                workingWidth = working_resolution[2]
+                workingHeight = working_resolution[3]
+            else:
+                # if now windows then assume there is no taskbar
+                resolution = app.desktop().screenGeometry()
+                workingWidth = resolution.width()
+                workingHeight = resolution.height()
             # determine if the taskbar is present by comparing the normal height to the working height
             isTaskbar = True
             difference = 100000

@@ -2,17 +2,22 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout, QApplication, QLabel, QDesktopWidget, QWidget, QPushButton, QFrame
 from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtGui import QCursor
+from PyQt5.QtGui import QCursor, QFont
 import config
 
 class ButtonFormat(QPushButton):
     def __init__(self, parent):
         super(ButtonFormat, self).__init__()
+        # create a font to be used by all of the buttons
+        font = QFont()
+        font.setFamily("Verdana")
+        font.setFixedPitch( True )
+        font.setPointSize( config.mainWin.width() / 105 )
+        self.setFont(font)
         self.parent = parent
         self.setStyleSheet("""
         QPushButton
         {
-            font-size: 18px;
             background-color: """+config.backgroundColor+""";
             color: """+config.backgroundColor+""";
             border-style: solid;
@@ -35,8 +40,11 @@ class SnapBox(QFrame):
         super(SnapBox, self).__init__()
         self.parent = parent
         self.setWindowFlags(Qt.FramelessWindowHint)
-        # get the current geometry of the snap button
-        #self.move(self.parent.mapToGlobal(self.parent.pos()))
+        # create a font to be used by all of the buttons
+        font = QFont()
+        font.setFamily("Verdana")
+        font.setFixedPitch( True )
+        font.setPointSize( self.parent.width() / 105 )
         
         self.setMouseTracking(True)
         self.setStyleSheet("""
@@ -48,20 +56,24 @@ class SnapBox(QFrame):
         """)
         # create the main horizoontal layout
         self.layout = QHBoxLayout()
+        self.layout.setSpacing(5)
         
         # create the 3 vertical layouts
         self.leftVert = QVBoxLayout()
+        self.leftVert.setSpacing(5)
         self.middleVert = QVBoxLayout()
+        self.middleVert.setSpacing(5)
         self.rightVert = QVBoxLayout()
+        self.rightVert.setSpacing(5)
 
         # create a max button
         self.max = ButtonFormat(self)
         self.max.setFixedSize(120, 155)
         self.max.setText("maximize")
+        self.max.setFont(font)
         self.max.setStyleSheet("""
         QPushButton
         {
-            font-size: 18px;
             background-color: """+config.backgroundColor+""";
             color:"""+config.accentColor1+""";
             border:none;
@@ -77,10 +89,10 @@ class SnapBox(QFrame):
         self.min = ButtonFormat(self)
         self.min.setFixedSize(120, 155)
         self.min.setText("minimize")
+        self.min.setFont(font)
         self.min.setStyleSheet("""
         QPushButton
         {
-            font-size: 18px;
             background-color: """+config.backgroundColor+""";
             color:"""+config.accentColor1+""";
             border:none;
