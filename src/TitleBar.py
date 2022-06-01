@@ -2,6 +2,13 @@ from PyQt5.QtWidgets import QHBoxLayout, QApplication, QLabel, QDesktopWidget, Q
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QCursor
 import config
+from platform import system
+operatingSystem = system()
+
+# Windows
+if operatingSystem == 'Windows':
+    # to get the working monitor size
+    from win32api import GetMonitorInfo, MonitorFromPoint
 
 class MyBar(QWidget):
     def __init__(self, parent):
